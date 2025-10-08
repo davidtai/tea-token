@@ -17,20 +17,23 @@ contract TokenDeployTestMiner is PRBTest, StdCheats {
     bytes32 internal teaCodeHash;
     bytes32 internal mintManagerCodeHash;
 
-    // TeaDeploy
-    address internal teaDeploy = 0x4fD5cEb2C0dEE34E78f6f7A5fbc2662EB46763fD;
     // Multisig
-    address internal multiSig = 0x5D435ac154d9188621275998dAB6249Fac149C41;
+    // address internal multiSig = 0x5D435ac154d9188621275998dAB6249Fac149C41;
+    // address internal multiSig = 0x2e20f31d47Fe7Aa111dCC67Cb0eC6A411254Ae6e;
+    address internal multiSig = 0xcDb68686290310dD8623371E1db53157dB6b8cA1;
     // new Tea
-    address internal newTea = 0x7eaA67f8D365BBe27D6278fDc2ba24a1aa71C8e5;
+    // address internal newTea = 0x7eaA67f8D365BBe27D6278fDc2ba24a1aa71C8e5;
+    // address internal newTea = 0x7Eaa8557E1A608bcc77C2d392093cE7F05c0DB14;
+    address internal newTea = 0x7eA1eB95D4C7463462223C714d310F919c1B1214;
     // deploy salt
-    bytes32 internal deploySalt = 0x000000000000000000000000000000000000000000ffffffaaaaabbbbbbbbbbb;
+    // bytes32 internal deploySalt = 0x000000000000000000000000000000000000000000ffffffaaaaabbbbbbbbbbb;
+    bytes32 internal deploySalt = 0x00000000000000000000000000000000000000ffffffffffaaaaabbbbbbbcccc;
 
     error Unauthorized();
     error AlreadyDeployed();
 
     function setUp() public virtual {
-        vm.createSelectFork({ urlOrAlias: "mainnet", blockNumber: 20_456_340 });
+        vm.createSelectFork({ urlOrAlias: "mainnet", blockNumber: 23_528_504 });
         tokenDeploy = TokenDeploy(
             DeterministicDeployer._deploy(deploySalt, type(TokenDeploy).creationCode, abi.encode(multiSig))
         );
@@ -39,10 +42,10 @@ contract TokenDeployTestMiner is PRBTest, StdCheats {
             keccak256(abi.encodePacked(type(MintManager).creationCode, abi.encode(multiSig, newTea)));
         // deploy salt
 
-        assertEq(six_bytes(multiSig), 0x5D4);
-        assertEq(six_bytes(teaDeploy), 0x4fD);
+        assertEq(six_bytes(multiSig), 0xcDb);
+        assertEq(six_bytes(newTea), 0x7ea);
+        console2.logAddress(address(tokenDeploy));
         console2.logAddress(multiSig);
-        console2.logAddress(teaDeploy);
         console2.logBytes32(teaCodeHash);
         console2.logBytes32(mintManagerCodeHash);
     }
@@ -57,10 +60,14 @@ contract TokenDeployTestMiner is PRBTest, StdCheats {
         }
     }
 
-    function testFuzz_mine_manager_salt(bytes32 salt) public {
+    function testFuzz_mine_manager_salt(bytes32 salt) public view {
         address _mintManager = Create2.computeAddress(salt, mintManagerCodeHash, address(tokenDeploy));
         // check the first six bytes are 0x7ea
-        assertNotEq(six_bytes(_mintManager), 0x7ea);
+        if (six_bytes(_mintManager) == 0x7ea) {
+            console2.logAddress(_mintManager);
+            console2.logBytes32(salt);
+            revert Unauthorized();
+        }
     }
 
     function six_bytes(address _address) public pure returns (uint32) {

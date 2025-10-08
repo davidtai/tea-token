@@ -37,8 +37,8 @@ contract Tea is Ownable2Step, ERC20Votes, ERC20Burnable {
     /* ------------------------------- Constructor ------------------------------ */
 
     constructor(address initialGovernor_)
-        ERC20("Tea Token", "TEA")
-        EIP712("Tea Token", "1")
+        ERC20("TEA", "TEA")
+        EIP712("TEA", "1")
         Ownable(initialGovernor_)
     {
         totalMinted = INITIAL_SUPPLY;
