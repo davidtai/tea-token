@@ -1,5 +1,8 @@
 # Tea.xyz Token Contract
 
+[![CI](https://github.com/davidtai/tea-token/actions/workflows/ci.yml/badge.svg)](https://github.com/davidtai/tea-token/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/davidtai/tea-token/branch/main/graph/badge.svg)](https://codecov.io/gh/davidtai/tea-token)
+
 ### Tokens
 
 #### `src/TeaToken/Tea.sol`
